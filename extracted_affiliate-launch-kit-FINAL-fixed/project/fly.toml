@@ -1,0 +1,31 @@
+# =============================================================================
+# fly.toml — Fly.io Deployment
+# Usage: fly launch && fly deploy
+# =============================================================================
+
+app = "affiliate-launch-kit"
+primary_region = "sin"
+
+[build]
+  dockerfile = "backend/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3000"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[http_service.concurrency]
+  type = "connections"
+  hard_limit = 100
+  soft_limit = 80
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512

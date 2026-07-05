@@ -1,0 +1,11 @@
+# =============================================================================
+# heroku.yml — Heroku Container Deployment
+# Usage: heroku container:login && heroku container:push web && heroku container:release web
+# =============================================================================
+
+build:
+  docker:
+    web: backend/Dockerfile
+
+run:
+  web: node dist/main.js

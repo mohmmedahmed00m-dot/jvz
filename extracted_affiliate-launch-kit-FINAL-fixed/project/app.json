@@ -1,0 +1,33 @@
+{
+  "name": "Affiliate Launch Kit",
+  "description": "Full-stack Affiliate Launch Kit — NestJS + React + PostgreSQL + Redis",
+  "repository": "https://github.com/mohmmedahmed00m-dot/JVzo",
+  "keywords": ["nestjs", "react", "affiliate", "jvzoo"],
+  "buildpacks": [{ "url": "heroku/nodejs" }],
+  "env": {
+    "JWT_SECRET": {
+      "description": "Secret for JWT access tokens",
+      "generator": "secret",
+      "required": true
+    },
+    "JWT_REFRESH_SECRET": {
+      "description": "Secret for JWT refresh tokens",
+      "generator": "secret",
+      "required": true
+    },
+    "FRONTEND_BASE_URL": {
+      "description": "Frontend URL for CORS",
+      "value": "https://your-app.herokuapp.com",
+      "required": true
+    },
+    "AI_USE_REAL_LLM": {
+      "description": "Use real Anthropic API (true/false)",
+      "value": "false",
+      "required": false
+    }
+  },
+  "addons": [
+    "heroku-postgresql:mini",
+    "heroku-redis:mini"
+  ]
+}

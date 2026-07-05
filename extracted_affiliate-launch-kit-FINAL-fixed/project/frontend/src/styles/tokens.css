@@ -1,0 +1,112 @@
+/* ============================================================================
+   Design Tokens — Section 7.1 (Color) & 7.2 (Typography) of the Technical Blueprint.
+   All colors/fonts flow through these CSS variables; no hardcoded values elsewhere.
+   ========================================================================== */
+:root {
+  /* --- Color System (Section 7.1) --- */
+  --color-primary: #0d7d6b;           /* trust-oriented deep teal */
+  --color-primary-hover: #0a6356;     /* darkened variant of primary */
+  --color-accent: #f59e0b;            /* high-contrast amber reserved for CTAs */
+  --color-accent-hover: #d97f06;
+  --color-success: #16a34a;           /* green */
+  --color-warning: #f59e0b;           /* amber */
+  --color-error: #dc2626;             /* red */
+  --color-background: #f6f8fa;        /* neutral light gray */
+  --color-surface: #ffffff;           /* white cards/panels */
+  --color-text-primary: #0f172a;      /* near-black */
+  --color-text-secondary: #64748b;    /* mid-gray */
+  --color-border: #e2e8f0;            /* light gray */
+  --color-surface-muted: #f1f5f9;
+
+  /* --- Dark mode token set (Section 7.1) swapped via data-theme --- */
+  --color-background-dark: #0b1220;
+  --color-surface-dark: #131c2e;
+  --color-text-primary-dark: #e8edf5;
+  --color-text-secondary-dark: #94a3b8;
+  --color-border-dark: #25324b;
+
+  /* --- Typography (Section 7.2) --- */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* Type scale: 12 / 14 / 16 / 20 / 24 / 32 / 40px (Section 7.2) */
+  --fs-12: 12px;
+  --fs-14: 14px;
+  --fs-base: 16px;
+  --fs-20: 20px;
+  --fs-24: 24px;
+  --fs-32: 32px;
+  --fs-40: 40px;
+
+  /* --- Fluid type scale: scales smoothly across all devices (no jumps) ---
+     clamp(min, preferred-vw, max). Used for headlines/screen titles so they
+     shrink on phones and grow on large screens within bounds. */
+  --fs-fluid-sm: clamp(0.875rem, 0.83rem + 0.2vw, 1rem);     /* 14-16 */
+  --fs-fluid-md: clamp(1rem, 0.94rem + 0.3vw, 1.25rem);      /* 16-20 */
+  --fs-fluid-lg: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);     /* 20-24 */
+  --fs-fluid-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);        /* 24-32 */
+  --fs-fluid-2xl: clamp(1.75rem, 1.2rem + 2.8vw, 2.5rem);    /* 28-40 */
+
+  /* --- Spacing: 8px base unit (Section 7.3) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  --control-height: 40px;
+  --control-height-compact: 32px;
+
+  /* --- Semantic status tints (badge/banner backgrounds + foregrounds) --- */
+  --color-on-primary: #ffffff;            /* text on filled colored controls */
+  --color-neutral-bg: #eef2f7; --color-neutral-fg: #475569;
+  --color-success-bg: #dcfce7; --color-success-fg: #15803d;
+  --color-warning-bg: #fef3c7; --color-warning-fg: #b45309;
+  --color-error-bg: #fee2e2;  --color-error-fg: #b91c1c;
+  --color-info-bg: #ccfbf1;   --color-info-fg: #0f766e;
+  --color-error-hover: #b91c1c;
+  --color-accent-fg: #1a1206;
+  --color-code-bg: #0b1220;   --color-code-fg: #c8f7d4;
+  --color-skeleton-mid: #e9eef4;
+  --color-banner-error-bg: #fef2f2; --color-banner-error-border: #fecaca; --color-banner-error-fg: #991b1b;
+
+  /* --- Breakpoints (documented for JS + CSS consistency) --- */
+  --bp-sm: 480px;   /* large phones */
+  --bp-md: 768px;   /* tablets */
+  --bp-lg: 1024px;  /* laptops */
+  --bp-xl: 1440px;  /* desktops */
+}
+
+[data-theme="dark"] {
+  --color-background: var(--color-background-dark);
+  --color-surface: var(--color-surface-dark);
+  --color-text-primary: var(--color-text-primary-dark);
+  --color-text-secondary: var(--color-text-secondary-dark);
+  --color-border: var(--color-border-dark);
+  --color-surface-muted: #1b2740;
+}
+
+/* --- Reset / base --- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; margin: 0; }
+a { color: var(--color-primary); }
+button { font-family: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+code, pre, .mono { font-family: var(--font-mono); }

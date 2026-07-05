@@ -1,0 +1,12 @@
+{
+  "name": "alk-e2e-browser",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Real browser E2E tests via Playwright",
+  "scripts": {
+    "test": "node browser-e2e.js"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}

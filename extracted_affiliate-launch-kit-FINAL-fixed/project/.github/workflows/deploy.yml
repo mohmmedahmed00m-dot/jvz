@@ -1,0 +1,46 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: alk_user
+          POSTGRES_PASSWORD: alk_pass
+          POSTGRES_DB: affiliate_launch_kit
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Build Backend
+        working-directory: backend
+        run: npm ci && npm run build
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm ci && npm run build
+
+      - name: Build Docker Images
+        run: |
+          docker build -t affiliate-backend:latest ./backend
+          docker build -t affiliate-frontend:latest ./frontend

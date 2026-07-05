@@ -1,0 +1,101 @@
+# =============================================================================
+# render.yaml — Render Blueprint
+# Connect GitHub repo → Render auto-detects → Deploys automatically
+# =============================================================================
+
+databases:
+  - name: affiliate-db
+    databaseName: affiliate_launch_kit
+    user: alk_user
+    plan: free
+
+services:
+  - type: web
+    name: affiliate-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: affiliate-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: affiliate-redis
+          type: redis
+          property: connectionString
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+
+      # ── تلقائي بالكامل (لا يحتاج تدخل) ──────────────────────────────────
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: HASH_SECRET
+        generateValue: true
+
+      # ── إعدادات ثابتة ────────────────────────────────────────────────────
+      - key: FRONTEND_BASE_URL
+        value: https://affiliate-frontend.onrender.com
+      - key: AI_PROVIDER
+        value: groq
+      - key: AI_USE_REAL_LLM
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: OPENAI_MODEL
+        value: gpt-4o
+      - key: GEMINI_MODEL
+        value: gemini-2.0-flash
+      - key: S3_REGION
+        value: auto
+      - key: EMAIL_FROM_ADDRESS
+        value: onboarding@resend.dev
+
+      # ── تحتاج حساب حقيقي — يدوي (اختر واحداً فقط من مفاتيح AI) ─────────
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: JVZOO_SECRET_KEY
+        sync: false
+
+      # ── اختيارية — يدوي (بدونها يعمل بدائل تلقائية) ─────────────────────
+      - key: EMAIL_PROVIDER_API_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+
+    healthCheckPath: /api/health
+
+  - type: redis
+    name: affiliate-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: affiliate-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://affiliate-backend.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /(.*)
+        destination: /index.html

@@ -1,0 +1,63 @@
+# =============================================================================
+# digitalocean.yaml — DigitalOcean App Platform
+# Usage: doctl apps create --spec digitalocean.yaml
+# =============================================================================
+
+spec:
+  name: affiliate-launch-kit
+
+  databases:
+    - name: affiliate-db
+      engine: PG
+      version: "17"
+      num_nodes: 1
+      size: db-s-dev-database
+    - name: affiliate-redis
+      engine: REDIS
+      version: "7"
+      num_nodes: 1
+      size: db-s-dev-database
+
+  services:
+    - name: backend
+      github:
+        repo: mohmmedahmed00m-dot/JVzo
+        branch: main
+        deploy_on_push: true
+      dockerfile_path: backend/Dockerfile
+      instance_count: 1
+      instance_size_slug: basic-xxs
+      http_port: 3000
+      envs:
+        - key: DATABASE_URL
+          value: ${affiliate-db.DATABASE_URL}
+        - key: REDIS_URL
+          value: ${affiliate-redis.REDIS_URL}
+        - key: NODE_ENV
+          value: production
+        - key: PORT
+          value: "3000"
+        - key: JWT_SECRET
+          value: CHANGE_ME_256_BIT
+        - key: JWT_REFRESH_SECRET
+          value: CHANGE_ME_TOO_256_BIT
+        - key: FRONTEND_BASE_URL
+          value: https://affiliate-launch-kit-frontend.ondigitalocean.app
+      health_check:
+        http_path: /api
+        initial_delay_seconds: 30
+
+  static_sites:
+    - name: frontend
+      github:
+        repo: mohmmedahmed00m-dot/JVzo
+        branch: main
+        deploy_on_push: true
+      build_command: cd frontend && npm install && npm run build
+      output_dir: frontend/dist
+      envs:
+        - key: VITE_API_URL
+          value: /api
+      routes:
+        - path: /api
+          preserve_path_prefix: true

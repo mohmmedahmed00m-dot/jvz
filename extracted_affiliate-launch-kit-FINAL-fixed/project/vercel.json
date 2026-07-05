@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "name": "affiliate-launch-kit",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "${BACKEND_URL}/api/$1" },
+    { "src": "/(.*)", "dest": "/frontend/$1" }
+  ]
+}
