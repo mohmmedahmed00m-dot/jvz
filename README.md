@@ -230,17 +230,14 @@ docker compose restart backend
 
 ---
 
-## ☁️ Option B: Render (Easiest — No Server Management)
+## ☁️ Option B: Render (Easiest, No Server Management)
 
-Render is a cloud platform that manages everything for you. No SSH, no Docker commands.
+Render reads the included `render.yaml` Blueprint file and provisions everything automatically: PostgreSQL, Redis, backend, and frontend.
 
 ### Step-by-Step: Render Deployment
 
-#### Step 1 — Push project to GitHub
+#### Step 1 — Push your project to GitHub
 
-1. Create a free account at [github.com](https://github.com)
-2. Create a new repository (private recommended)
-3. Push the project:
 ```bash
 cd /path/to/project
 git init
@@ -250,41 +247,36 @@ git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
 git push -u origin main
 ```
 
-#### Step 2 — Connect to Render
+#### Step 2 — Create the Blueprint on Render
 
-1. Go to → **[render.com](https://render.com)** → Sign up free (use GitHub login)
-2. Click **"New +"** → **"Blueprint"**
-3. Connect your GitHub account → select your repository
-4. Render auto-detects `render.yaml` and shows a preview of what it'll create:
-   - `affiliate-backend` (web service)
-   - `affiliate-frontend` (static site)
-   - `affiliate-redis` (Redis)
-   - `affiliate-db` (PostgreSQL)
+1. Go to → **[render.com](https://render.com)** → Sign up (GitHub login is easiest)
+2. Click **New +** → **Blueprint**
+3. Select your GitHub repo → Render detects `render.yaml` automatically
+4. Render shows you the 4 services it will create: `affiliate-backend`, `affiliate-frontend`, `affiliate-redis`, `affiliate-db`
 
-#### Step 3 — Configure secrets
+#### Step 3 — Fill in the required keys
 
-On the Blueprint preview page, Render will ask you to fill in only the keys that need a real account:
+On the same screen, Render asks for the keys marked `sync: false` in `render.yaml`:
 
-| Key | Required? | What to paste |
+| Key | Required? | Where to get it |
 |---|---|---|
 | `GROQ_API_KEY` | 🔴 Required | Your Groq key (`gsk_...`) |
-| `JVZOO_SECRET_KEY` | 🔴 If selling via JVZoo | From JVZoo Vendor Dashboard |
+| `JVZOO_SECRET_KEY` | 🔴 Always required | From JVZoo Vendor Dashboard. Not selling via JVZoo yet? Enter any random string (e.g. `openssl rand -hex 24`) — the app will not start without a value here. |
 | `EMAIL_PROVIDER_API_KEY` | 🟡 Optional | Your Resend key (`re_...`) |
-| `S3_ACCESS_KEY_ID` | 🟡 Optional | Cloudflare R2 / AWS |
-| `S3_SECRET_ACCESS_KEY` | 🟡 Optional | Cloudflare R2 / AWS |
-| `S3_BUCKET_NAME` | 🟡 Optional | Your bucket name |
+| `S3_*` (3 keys) | 🟡 Optional | Cloudflare R2 credentials |
 
-All other secrets are generated automatically by Render.
+Everything else (JWT secrets, encryption keys, database password) is generated automatically by Render — you never need to touch them.
 
 #### Step 4 — Deploy
 
 Click **"Apply"**. Render builds and deploys everything. Takes ~5-10 minutes on first deploy.
 
-Your app URLs will be:
+Your app URLs will appear on each service's page in the Render dashboard, in the format:
 ```
-Frontend: https://affiliate-frontend.onrender.com
-Backend:  https://affiliate-backend.onrender.com
+Frontend: https://affiliate-frontend-xxxx.onrender.com
+Backend:  https://affiliate-backend-xxxx.onrender.com
 ```
+> ℹ️ The random suffix (`-xxxx`) is normal — it appears whenever the plain name is already taken by another Render account. The app detects its real URL automatically at runtime (`RENDER_EXTERNAL_URL`), so this doesn't require any manual configuration.
 
 > ⚠️ **Free tier limitation:** Render's free services spin down after 15 minutes of inactivity and take ~30 seconds to wake up on the next request. Upgrade to the $7/month paid plan to avoid this.
 
