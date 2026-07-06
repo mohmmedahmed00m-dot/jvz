@@ -43,7 +43,10 @@ services:
 
       # ── إعدادات ثابتة ────────────────────────────────────────────────────
       - key: FRONTEND_BASE_URL
-        value: https://affiliate-frontend.onrender.com
+        fromService:
+          name: affiliate-frontend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
       - key: AI_PROVIDER
         value: groq
       - key: AI_USE_REAL_LLM
@@ -91,11 +94,14 @@ services:
   - type: web
     name: affiliate-frontend
     runtime: static
-    buildCommand: cd frontend && npm install && npm run build
+    buildCommand: cd frontend && npm install && export VITE_API_URL="${BACKEND_URL}/api" && npm run build
     staticPublishPath: frontend/dist
     envVars:
-      - key: VITE_API_URL
-        value: https://affiliate-backend.onrender.com/api
+      - key: BACKEND_URL
+        fromService:
+          name: affiliate-backend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
     routes:
       - type: rewrite
         source: /(.*)
